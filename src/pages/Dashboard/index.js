@@ -3,7 +3,7 @@ import Moment from "moment";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import take from "lodash/take";
-import { Button, Card, Table, Typography } from "antd";
+import { Button, Card, message, Spin, Table, Typography } from "antd";
 import { astraService } from "../../services";
 import SummaryItem from "./components/SummaryItem";
 import { formatNumber, formatTokenAmount, getStakingValidatorByHex, percent } from "../../utils/common";
@@ -30,6 +30,7 @@ const SummarySection = styled.div`
 `;
 
 const useDashboardData = () => {
+  const [isDataLoaded, setDataLoaded] = React.useState(false);
   const [blocks, setBlocks] = React.useState([]);
   const [validators, setValidators] = React.useState([]);
   const [intervalData, setIntervalData] = React.useState({});
@@ -46,9 +47,11 @@ const useDashboardData = () => {
       const bankTotal = await astraService.fetchBankTotal(stakingParams.result.bond_denom);
       const blockHeight = latestBlock?.block?.header?.height || 0;
 
+      setDataLoaded(true);
       setIntervalData({ latestBlock, blockHeight, stakingPool, stakingParams, inflation, bankTotal });
     } catch (error) {
       console.error(error);
+      message.error(error);
     }
   }, []);
 
@@ -92,7 +95,7 @@ const useDashboardData = () => {
     };
   }, []);
 
-  return { ...intervalData, validators, blocks };
+  return { ...intervalData, validators, blocks, isDataLoaded };
 };
 
 const useSummaryDisplay = (data = {}) => {
@@ -159,6 +162,10 @@ const Dashboard = () => {
   const data = useDashboardData();
   const { boundedTokenPercent, boundedTokenDetail, inflationPercent, latestBlockCreatedTime } = useSummaryDisplay(data);
   const blocksTableProps = useBlocksTableProps(data);
+
+  if (!data.isDataLoaded) {
+    return <Spin />;
+  }
 
   return (
     <>

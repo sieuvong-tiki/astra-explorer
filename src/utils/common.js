@@ -41,7 +41,6 @@ export function formatTokenAmount(tokenAmount, fraction = 2, denom = "uatom") {
   if (amount > 10) {
     return parseFloat(amount.toFixed(fraction));
   }
-  console.log("super", { tokenAmount, fraction, denom, res: parseFloat(amount) });
   return parseFloat(amount);
 }
 

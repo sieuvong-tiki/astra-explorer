@@ -1,13 +1,14 @@
-import axios, { Axios } from "axios";
+import { Axios } from "axios";
 
 class AstraService {
   constructor() {
     this.client = new Axios({
       baseURL: "https://api.astra.bar",
+      validateStatus: (status) => status < 400,
     });
 
     this.client.interceptors.response.use((response) =>
-      typeof response.data === "string" ? JSON.parse(response.data) : response.data
+      typeof response?.data === "string" ? JSON.parse(response?.data) : response?.data
     );
   }
 

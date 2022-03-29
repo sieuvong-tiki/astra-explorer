@@ -9,7 +9,7 @@ import AddressDetail from "./pages/AddressDetail";
 import AstraImg from "./assets/images/astra.png";
 import { Header } from "antd/lib/layout/layout";
 import { useHistory } from "react-router-dom";
-import { Avatar, Input } from "antd";
+import { Avatar, Input, message } from "antd";
 import { Link } from "react-router-dom";
 
 import "antd/dist/antd.css";
@@ -32,7 +32,7 @@ const MasterLayout = styled.div`
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 9999;
+    z-index: 99;
 
     display: grid;
     grid-template-columns: fit-content(200px) minmax(0, 1fr);
@@ -78,6 +78,8 @@ function App() {
       history.push(`/transaction/${value}`);
     } else if (addr.test(value)) {
       history.push(`/address/${value}`);
+    } else {
+      message.error("Please enter a valid Height/Transaction/Address");
     }
   }, []);
 
@@ -104,6 +106,7 @@ function App() {
           <Route path="/" exact>
             <Dashboard />
           </Route>
+          <Route path="*">404 Not Found</Route>
         </Switch>
       </ContentWrapper>
     </MasterLayout>

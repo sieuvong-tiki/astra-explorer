@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { map } from "lodash";
-import { Card, List, Table } from "antd";
+import { Card, List, message, Table } from "antd";
 import { useParams } from "react-router-dom";
 import { astraService } from "../../services";
 import { abbrAddress, abbrMessage, decodeTx, tokenFormatter } from "../../utils/common";
@@ -22,13 +22,7 @@ const normalizeTx = ({ hash, fee, memo, messages }) => ({
   messages: abbrMessage(messages),
 });
 
-const normalizeData = ({
-  block_id,
-  block: {
-    header,
-    data: { txs },
-  },
-}) => ({
+const normalizeData = ({ block_id, block: { header, data: { txs } } = {} }) => ({
   block_id,
   header,
   txs: map(map(txs, decodeTx), normalizeTx),
@@ -67,7 +61,10 @@ const BlockDetail = () => {
   const [blockDetail, setBlockDetail] = React.useState(null);
   const txsTableProps = useTxsTable();
   React.useEffect(() => {
-    astraService.fetchBlockByHeight(height).then(setBlockDetail);
+    astraService
+      .fetchBlockByHeight(height)
+      .then(setBlockDetail)
+      .catch((error) => message.error(error.response.data));
   }, [height]);
   if (!blockDetail) {
     return null;

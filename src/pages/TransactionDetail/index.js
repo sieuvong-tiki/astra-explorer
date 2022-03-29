@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { map } from "lodash";
-import { Card, List } from "antd";
+import { Card, List, message } from "antd";
 import { useParams } from "react-router-dom";
 import { astraService } from "../../services";
 import { toDay, tokenFormatter } from "../../utils/common";
@@ -41,7 +41,11 @@ const TransactionDetail = () => {
   const { hash } = useParams();
   const [txDetail, setTxDetail] = React.useState(null);
   React.useEffect(() => {
-    astraService.fetchTxDetail(hash).then(WrapStdTx.create).then(setTxDetail);
+    astraService
+      .fetchTxDetail(hash)
+      .then(WrapStdTx.create)
+      .then(setTxDetail)
+      .catch((error) => message.error(error.response.data));
   }, [hash]);
   if (!txDetail) {
     return null;

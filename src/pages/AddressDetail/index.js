@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import styled from "styled-components";
 import { get } from "lodash";
-import { Card, List, Table } from "antd";
+import { Card, List, message, Table } from "antd";
 import { useParams } from "react-router-dom";
 import { astraService } from "../../services";
 import {
@@ -89,19 +89,6 @@ const normalizeData = ({
     ["Sequence"]: accountDetail.value?.sequence,
     ["Public Key"]: JSON.stringify(accountDetail.value?.public_key),
   };
-  console.log("super", {
-    balanceAmount,
-    rewardsAmount,
-    totalAmount,
-    deletegationAmounts,
-    balanceAssets,
-    delegationAsset,
-    unboundingAsset,
-    balanceAssets,
-    delegationInfos,
-    accountInfo,
-    accountDetail,
-  });
   return {
     assets: [...balanceAssets, delegationAsset, ...rewardsAssets, unboundingAsset],
     delegationInfos,
@@ -197,7 +184,9 @@ const TransactionDetail = () => {
       astraService.fetchStakingDelegations(address).then(setStakingDelegations),
       astraService.fetchStakingUnbounding(address).then(setStakingUnbounding),
       astraService.getTxsBySender({ sender: address }).then(setTxs),
-    ]).then(() => setDataLoaded(true));
+    ])
+      .then(() => setDataLoaded(true))
+      .catch((error) => message.error(error.response.data));
   }, [address]);
 
   if (!dataLoaded) {
@@ -213,17 +202,6 @@ const TransactionDetail = () => {
     txs,
   });
   const { assets, delegationInfos, transactionInfos, accountInfo } = normalizedData;
-  console.log({
-    assets,
-    address,
-    accountDetail,
-    accountBalance,
-    stakingRewards,
-    stakingValidators,
-    stakingDelegations,
-    stakingUnbounding,
-    txs,
-  });
 
   return (
     <PageContainer>
